@@ -23,4 +23,4 @@ server.listen(PORT, () => {
     console.log(`Currently listening on port ${PORT}.`)
 })
 
-module.exports = app;
+module.exports = server;
