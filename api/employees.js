@@ -52,7 +52,7 @@ employeesRouter.get('/:employeeId', (req, res, next) => {
 employeesRouter.post('/', checkValidEmployee, (req, res, next) => {
     req.isCurrentEmployee = req.isCurrentEmployee === 0? 0 : 1;
     const sql = `INSERT INTO Employee(name, position, wage, is_current_employee)
-                VALUES($name, $position, $wage, $isCurrentEmployee)`
+    VALUES($name, $position, $wage, $isCurrentEmployee)`
     const values = {
         $name: req.name,
         $position: req.position,
@@ -70,6 +70,59 @@ employeesRouter.post('/', checkValidEmployee, (req, res, next) => {
                     next(err);
                 } else {
                     res.status(201).json({employee: row});
+                }
+            });
+        }
+    });
+})
+
+
+employeesRouter.put('/:employeeId', checkValidEmployee, (req, res, next) => {
+    req.isCurrentEmployee = req.isCurrentEmployee === 0 ? 0 : 1;
+    db.run(`UPDATE Employee
+    SET name = $name, position = $position, wage = $wage, is_current_employee = $isCurrentEmployee
+    WHERE id = $id`,
+    {
+        $name: req.name,
+        $position: req.position,
+        $wage: req.wage,
+        $isCurrentEmployee: req.isCurrentEmployee,
+        $id: req.params.employeeId
+    },
+    (err) => {
+        if (err) {
+            next(err);
+        } else {
+            const sql = `SELECT * FROM Employee WHERE id = $id`;
+            const values = {$id: req.params.employeeId};
+            db.get(sql, values, (err, employee) => {
+                if (err){
+                    next(err);
+                } else {
+                    res.status(200).json({employee: employee});
+                }
+            });
+        }
+    });
+})
+
+employeesRouter.delete('/:employeeId', (req, res, next) => {
+    db.run(`UPDATE Employee
+    SET is_current_employee = 0
+    WHERE id = $id`,
+    {
+        $id: req.params.employeeId
+    }, (err) => {
+        if(err){
+            next(err);
+        } else {
+            const sql = `SELECT * FROM Employee WHERE id = $id`;
+            const values = {$id: req.params.employeeId};
+            db.get(sql, values, (err, employee) => {
+                if (err){
+                    next(err);
+                } else {
+                    res.status(200).json({employee: employee});
                 }
             });
         }
