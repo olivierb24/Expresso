@@ -69,7 +69,7 @@ timesheetsRouter.post('/', checkValidTimesheet, (req, res, next) => {
 timesheetsRouter.put('/:timesheetId', checkValidTimesheet, (req, res, next) => {
     const sql = `UPDATE Timesheet
                 SET hours = $hours, rate = $rate, date = $date
-                WHERE id = $timesheetId `;
+                WHERE id = $timesheetId AND employee_id = $employeeId`;
     const values = {$hours: req.hours, $rate: req.hours, $date: req.date, $timesheetId: req.params.timesheetId, $employeeId: req.employeeId};
     db.run(sql, values, (err) => {
         if (err) {
