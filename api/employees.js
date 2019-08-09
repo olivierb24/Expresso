@@ -1,6 +1,7 @@
 const employeesRouter = require('express').Router();
 const sqlite = require('sqlite3');
 const db = new sqlite.Database(process.env.TEST_DATABASE || '../database.sqlite');
+const timesheetsRouter = require('./timesheets');
 
 /*Verifies that the requested employee exists and attaches it to req.employee */
 employeesRouter.param('employeeId', (req, res, next, employeeId) =>{
@@ -16,6 +17,9 @@ employeesRouter.param('employeeId', (req, res, next, employeeId) =>{
         }
     })
 })
+
+
+employeesRouter.use('/:employeeId/timesheets', timesheetsRouter);
 
 
 const checkValidEmployee = (req, res, next) => {
