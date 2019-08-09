@@ -4,13 +4,6 @@ const employeesRouter = require('./employees');
 
 
 
-
-
-
-
-
-
-
 apiRouter.use('/employees', employeesRouter);
 
 
